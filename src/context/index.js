@@ -27,9 +27,6 @@ function reducer(state, action) {
     case "FIXED_NAVBAR": {
       return { ...state, fixedNavbar: action.value };
     }
-    case "OPEN_CONFIGURATOR": {
-      return { ...state, openConfigurator: action.value };
-    }
     case "DIRECTION": {
       return { ...state, direction: action.value };
     }
