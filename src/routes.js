@@ -7,22 +7,23 @@ import Profile from "layouts/profile";
 // Vision UI Dashboard React icons
 import { BsFillPersonFill } from "react-icons/bs";
 import { BsCreditCardFill } from "react-icons/bs";
+import { IoWallet } from "react-icons/io5";
 import { IoStatsChart } from "react-icons/io5";
 import { IoHome } from "react-icons/io5";
 
 const routes = [
   {
     type: "collapse",
-    name: "Dashboard",
-    key: "dashboard",
-    route: "/dashboard",
+    name: "Home",
+    key: "home",
+    route: "/home",
     icon: <IoHome size="15px" color="inherit" />,
     component: Dashboard,
     noCollapse: true,
   },
   {
     type: "collapse",
-    name: "Tables",
+    name: "Leaderboard",
     key: "tables",
     route: "/tables",
     icon: <IoStatsChart size="15px" color="inherit" />,
@@ -31,14 +32,14 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Billing",
+    name: "Wallet",
     key: "billing",
     route: "/billing",
-    icon: <BsCreditCardFill size="15px" color="inherit" />,
+    icon: <IoWallet size="15px" color="inherit" />,
     component: Billing,
     noCollapse: true,
   },
-  { type: "title", title: "Account Pages", key: "account-pages" },
+  // { type: "title", title: "Account Pages", key: "account-pages" },
   {
     type: "collapse",
     name: "Profile",

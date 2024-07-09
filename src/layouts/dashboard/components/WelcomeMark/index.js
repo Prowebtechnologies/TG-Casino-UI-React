@@ -4,7 +4,7 @@ import { Card, Icon } from "@mui/material";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 
-import gif from "assets/images/cardimgfree.png";
+import gif from "assets/images/welcome-profile.png";
 
 const WelcomeMark = () => {
   return (
@@ -17,20 +17,20 @@ const WelcomeMark = () => {
     })}>
       <VuiBox height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         <VuiBox>
-          <VuiTypography color="text" variant="button" fontWeight="regular" mb="12px">
-            Welcome back,
+          <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px">
+            Welcome To Defination Lab,
           </VuiTypography>
           <VuiTypography color="white" variant="h3" fontWeight="bold" mb="18px">
             Mark Johnson
           </VuiTypography>
-          <VuiTypography color="text" variant="h6" fontWeight="regular" mb="auto">
+          <VuiTypography color="white" variant="h6" fontWeight="regular" mb="auto">
             Glad to see you again!
-            <br /> Ask me anything.
+            <br /> Please enjoy here!
           </VuiTypography>
         </VuiBox>
         <VuiTypography
           component="a"
-          href="#"
+          href="https://definationlabs.io"
           variant="button"
           color="white"
           fontWeight="regular"
@@ -51,7 +51,7 @@ const WelcomeMark = () => {
             },
           }}
         >
-          Tap to record
+          Defination Lab
           <Icon sx={{ fontWeight: "bold", ml: "5px" }}>arrow_forward</Icon>
         </VuiTypography>
       </VuiBox>

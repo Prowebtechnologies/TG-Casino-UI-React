@@ -1,17 +1,13 @@
 {
-	"name": "vision-ui-dashboard-react",
-	"version": "3.0.0",
+	"name": "casino-defination-ui",
+	"version": "1.0.0",
 	"private": true,
-	"author": "Creative Tim",
-	"license": "See license in https://www.creative-tim.com/license",
-	"description": "Material UI version of Vision UI Dashboard by Creative Tim",
-	"homepage": "https://demos.creative-tim.com/vision-ui-dashboard-react/#/dashboard",
-	"bugs": {
-		"url": "https://github.com/creativetimofficial/vision-ui-dashboard-react/issues"
-	},
+	"author": "bluebigthink",
+	"license": "MIT",
+	"description": "Material UI version",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/creativetimofficial/vision-ui-dashboard-react.git"
+		"url": "https://github.com/DefinationCasino/Casino-UI-React"
 	},
 	"dependencies": {
 		"@emotion/cache": "11.4.0",
