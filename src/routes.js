@@ -3,13 +3,15 @@ import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
 import Profile from "layouts/profile";
+import Coinflip from "layouts/coinflip";
 
 // Vision UI Dashboard React icons
 import { BsFillPersonFill } from "react-icons/bs";
-import { BsCreditCardFill } from "react-icons/bs";
+// import { BsCreditCardFill } from "react-icons/bs";
 import { IoWallet } from "react-icons/io5";
 import { IoStatsChart } from "react-icons/io5";
 import { IoHome } from "react-icons/io5";
+import { element } from "prop-types";
 
 const routes = [
   {
@@ -33,8 +35,8 @@ const routes = [
   {
     type: "collapse",
     name: "Wallet",
-    key: "billing",
-    route: "/billing",
+    key: "wallet",
+    route: "/wallet",
     icon: <IoWallet size="15px" color="inherit" />,
     component: Billing,
     noCollapse: true,
@@ -47,6 +49,15 @@ const routes = [
     route: "/profile",
     icon: <BsFillPersonFill size="15px" color="inherit" />,
     component: Profile,
+    noCollapse: true,
+  },
+  {
+    type: "component",
+    name: "Coinflip",
+    key: "coiflip",
+    route: "/coinflip",
+    icon: <IoHome size="15px" color="inherit" />,
+    component: Coinflip,
     noCollapse: true,
   },
 ];
