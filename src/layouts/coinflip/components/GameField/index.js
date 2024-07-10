@@ -21,6 +21,10 @@ import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 import VuiButton from "components/VuiButton";
 import VuiSwitch from "components/VuiSwitch";
+import VuiInput from "components/VuiInput";
+import GradientBorder from "examples/GradientBorder";
+import borders from "assets/theme/base/borders";
+import radialGradient from "assets/theme/functions/radialGradient";
 
 // React icons
 import { MdOutlineDomain } from "react-icons/md";
@@ -48,6 +52,8 @@ const GameField = () => {
   const [spin, setSpin] = useState("");
   const [kind, setKind] = useState(ETH)
   const [coin, setCoin] = useState(false);
+  const [bet, setBet] = useState(false)
+  const [amount, setAmount] = useState(0.5)
   const [playing, setPlaying] = useState(false);
   const [age, setAge] = React.useState('');
   const [isUSD, seIsUSD] = useState(true);
@@ -67,8 +73,19 @@ const GameField = () => {
     setTimeout(() => {setPlaying(false)}, 3000)
     // setSpin("")
   }
+  const funcBet = () => {
+    //balance will decrease
+    setBet(true)
+  }
+  const funcCashout = () => {
+    //balance will increase
+    setBet(false)
+  }
+  const funcBetAmount = (times) => {
+    setAmount((amount * times).toFixed(4));
+  }
   return (
-    <Card sx={{ padding: "30px" }}>
+    <Card sx={{ padding: "30px", mt:"10px" }}>
       <VuiBox display="flex" mb="14px">
         <VuiBox mt={0.25}>
           <VuiSwitch
@@ -98,14 +115,13 @@ const GameField = () => {
         >
           <VuiBox display="flex" justifyContent="space-beetween" alignItems="center">
             <Box className="coin" id="coin" sx={{ animation : `${spin} 2.5s forwards`, aspectRatio:'1/1'}}>
-              <Box className="heads">
-                <img src={Heads}/>
-              </Box>
               <Box className="tails">
                 <img src={Tails}/>
               </Box>
+              <Box className="heads">
+                <img src={Heads}/>
+              </Box>
             </Box>
-
           </VuiBox>
         </VuiBox>
         <VuiBox display="block" justifyContent="space-beetween" alignItems="center">
@@ -114,28 +130,61 @@ const GameField = () => {
               orientation={tabsOrientation}
               value={kind}
               onChange={handleKindChange}
-              sx={{ background: "transparent", display: "flex", width: '100%'}}
+              sx={{ background: "transparent", display: "flex", width: '100%', margin:"auto"}}
             >
-              <Tab label="ETH" icon={<FaEthereum color="white" size="20px" />} sx={{minWidth: "50%"}}/>
-              <Tab label="BNB" icon={<SiBinance color="white" size="20px" />} sx={{minWidth: "50%"}}/>
+              <Tab label="ETH" icon={<FaEthereum color="white" size="20px" />} disabled={bet} sx={{minWidth: "50%"}}/>
+              <Tab label="BNB" icon={<SiBinance color="white" size="20px" />} disabled={bet} sx={{minWidth: "50%"}}/>
             </Tabs>
           </VuiBox>
-
-          <Stack direction="row" mx="auto" mt={1} spacing="10px" sx={{width:'100%'}} >
-            <VuiButton variant="contained" color="secondary" sx={{width:"50%"}} onClick={coinflip}>
-              <VuiBox component="img" src={Heads} sx={{ width: "25px", aspectRatio: "1/1" }} />
-              &nbsp;&nbsp;&nbsp;&nbsp;Heads
-            </VuiButton>
-            <VuiButton variant="contained" color="secondary" sx={{width:"50%"}} onClick={coinflip}>
-              <VuiBox component="img" src={Tails} sx={{ width: "25px", aspectRatio: "1/1" }} />
-              &nbsp;&nbsp;&nbsp;&nbsp;Tails
-            </VuiButton>
-          </Stack>
+          { bet &&
+            <>
+              <Stack direction="row" mx="auto" mt={1} spacing="10px" sx={{width:'100%'}} >
+                <VuiButton variant="contained" color="secondary" sx={{width:"50%", fontSize:"14px"}} disabled={playing} onClick={coinflip}>
+                  <VuiBox component="img" src={Heads} sx={{ width: "25px", aspectRatio: "1/1" }} />
+                  &nbsp;&nbsp;&nbsp;&nbsp;Heads
+                </VuiButton>
+                <VuiButton variant="contained" color="secondary" sx={{width:"50%", fontSize:"14px"}} disabled={playing} onClick={coinflip}>
+                  <VuiBox component="img" src={Tails} sx={{ width: "25px", aspectRatio: "1/1" }} />
+                  &nbsp;&nbsp;&nbsp;&nbsp;Tails
+                </VuiButton>
+              </Stack>
+              <Stack direction="row" spacing="10px" m="auto" mt="10px">
+                <VuiButton variant="contained" color="warning" sx={{width:"100%", fontSize: "16px"}} disabled={playing} onClick={funcCashout}>
+                  Cashout
+                </VuiButton>
+              </Stack>
+            </>
+          }
+          {!bet &&
           <Stack direction="row" spacing="10px" m="auto" mt="10px">
-            <VuiButton variant="contained" color="warning" sx={{width:"100%"}}>
+            <VuiButton variant="contained" color="success" sx={{width:"100%", fontSize: "16px"}} onClick={funcBet}>
               Bet
             </VuiButton>
           </Stack>
+          }
+          <Stack direction="row" spacing="10px" m="auto" mt="10px">
+            <VuiBox mb={2} sx={{width:"50%"}}>
+              <GradientBorder
+                minWidth="100%"
+                padding="1px"
+                borderRadius={borders.borderRadius.lg}
+                backgroundImage={radialGradient(
+                  palette.gradients.borderLight.main,
+                  palette.gradients.borderLight.state,
+                  palette.gradients.borderLight.angle
+                )}
+              >
+                <VuiInput type="number" value={amount} onChange={(e) => {setAmount(e.target.value)}} fontWeight="500"/>
+              </GradientBorder>
+            </VuiBox>
+            <VuiButton variant="contained" color="secondary" sx={{width:"25%", fontSize:"14px" }} disabled={bet} onClick={() => funcBetAmount(0.5)}>
+              /2
+            </VuiButton>
+            <VuiButton variant="contained" color="secondary" sx={{width:"25%", fontSize:"14px"}} disabled={bet} onClick={() => funcBetAmount(2)}>
+              x2
+            </VuiButton>
+          </Stack>
+
         </VuiBox>
         {/* <VuiBox display="flex" justifyContent="space-beetween" alignItems="center">
           <Stack direction="row" spacing="10px" mr="auto">
