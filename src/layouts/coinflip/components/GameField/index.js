@@ -1,24 +1,36 @@
-
-
 import React from "react";
-
+import { useState } from "react";
 // @mui components
 import { Card, Stack } from "@mui/material";
 
 // Vision UI Dashboard assets
 import balance from "assets/images/billing-background-balance.png";
-import Graph from "assets/images/shapes/graph-billing.svg";
+import Heads from "assets/images/heads.webp";
+import Tails from "assets/images/tails.webp";
 
 import palette from "assets/theme/base/colors";
 
 // Vision UI Dashboard components
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
-
+import VuiButton from "components/VuiButton";
 // React icons
 import { MdOutlineDomain } from "react-icons/md";
+import {Box} from "@mui/material";
+import './index.css'
 
 const GameField = () => {
+  const [spin, setSpin] = useState("");
+  const [coin, setCoin] = useState(false);
+  const [playing, setPlaying] = useState(false);
+
+  const coinflip = () => {
+    setPlaying(true);
+    setCoin(!coin);
+    setSpin(coin? "spin-heads" : "spin-tails");
+    setTimeout(() => {setPlaying(false)}, 3000)
+    // setSpin("")
+  }
   return (
     <Card sx={{ padding: "30px" }}>
       <VuiBox display="flex" flexDirection="column">
@@ -30,12 +42,33 @@ const GameField = () => {
           sx={{ backgroundImage: `url(${balance})`, backgroundSize: "cover", borderRadius: "18px" }}
         >
           <VuiBox display="flex" justifyContent="space-beetween" alignItems="center">
-            <VuiBox component="img" src={Graph} sx={{ width: "100%", aspectRatio: "1/1" }} />
+            <Box className="coin" id="coin" sx={{ animation : `${spin} 2.5s forwards`, aspectRatio:'1/1'}}>
+              <Box className="heads">
+                <img src={Heads}/>
+              </Box>
+              <Box className="tails">
+                <img src={Tails}/>
+              </Box>
+            </Box>
+
+            {/* <VuiBox component="img" src={Graph} sx={{ width: "100%", aspectRatio: "1/1" }} /> */}
           </VuiBox>
         </VuiBox>
-        <VuiTypography color="text" variant="xxs" fontWeight="medium" mb="8px">
-          NEWEST
-        </VuiTypography>
+        <VuiBox display="block" justifyContent="space-beetween" alignItems="center">
+          <Stack direction="row" mx="auto" spacing="10px" sx={{width:'100%'}} >
+            <VuiButton variant="contained" color="warning" sx={{width:"50%"}} onClick={coinflip}>
+              Heads
+            </VuiButton>
+            <VuiButton variant="contained" color="info" sx={{width:"50%"}} onClick={coinflip}>
+              Tails
+            </VuiButton>
+          </Stack>
+          <Stack direction="row" spacing="10px" m="auto" mt="10px">
+            <VuiButton variant="contained" color="warning" sx={{width:"100%"}}>
+              Bet
+            </VuiButton>
+          </Stack>
+        </VuiBox>
         <VuiBox display="flex" justifyContent="space-beetween" alignItems="center">
           <Stack direction="row" spacing="10px" mr="auto">
             <VuiBox
