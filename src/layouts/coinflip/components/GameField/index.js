@@ -1,7 +1,13 @@
 import React from "react";
 import { useState } from "react";
 // @mui components
-import { Card, Stack } from "@mui/material";
+import { 
+  AppBar,
+  Card, 
+  Stack,
+  Tab,
+  Tabs
+} from "@mui/material";
 
 // Vision UI Dashboard assets
 import balance from "assets/images/billing-background-balance.png";
@@ -14,15 +20,45 @@ import palette from "assets/theme/base/colors";
 import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 import VuiButton from "components/VuiButton";
+import VuiSwitch from "components/VuiSwitch";
+
 // React icons
 import { MdOutlineDomain } from "react-icons/md";
-import {Box} from "@mui/material";
+import { FaEthereum } from "react-icons/fa";
+import { SiBinance } from "react-icons/si";
+import {Box, Select, MenuItem, FormControl} from "@mui/material";
 import './index.css'
+
+const ETH = 0;
+const BNB = 1;
+const getCryptoName = (crypto) => {
+  let name = ''
+  switch(crypto) {
+    case ETH:
+      name = 'ETH'
+      break;
+    case BNB:
+      name = 'BNB'
+      break;
+  }
+  return name
+}
 
 const GameField = () => {
   const [spin, setSpin] = useState("");
+  const [kind, setKind] = useState(ETH)
   const [coin, setCoin] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [age, setAge] = React.useState('');
+  const [isUSD, seIsUSD] = useState(true);
+
+  const [tabsOrientation, setTabsOrientation] = useState("horizontal");
+  const [tabValue, setTabValue] = useState(0);
+  const handleSetTabValue = (event, newValue) => setTabValue(newValue);
+
+  const handleKindChange = (event, newValue) => {
+    setKind(newValue);
+  };
 
   const coinflip = () => {
     setPlaying(true);
@@ -33,6 +69,25 @@ const GameField = () => {
   }
   return (
     <Card sx={{ padding: "30px" }}>
+      <VuiBox display="flex" mb="14px">
+        <VuiBox mt={0.25}>
+          <VuiSwitch
+            sx={{ background: "#1B1F3D", color: "#fff" }}
+            color="info"
+            checked={isUSD}
+            onChange={() => seIsUSD(!isUSD)}
+          />
+        </VuiBox>
+        <VuiBox width="80%" ml={2}>
+          <VuiTypography variant="button" fontWeight="regular" color="text">
+              USD
+          </VuiTypography>
+          <VuiTypography variant="button" ml={2} fontWeight="regular" color="text">
+            Balance : ${} {isUSD ? 'USD' : getCryptoName(kind)}
+          </VuiTypography>
+        </VuiBox>
+      </VuiBox>
+
       <VuiBox display="flex" flexDirection="column">
         <VuiBox
           mb="32px"
@@ -51,16 +106,29 @@ const GameField = () => {
               </Box>
             </Box>
 
-            {/* <VuiBox component="img" src={Graph} sx={{ width: "100%", aspectRatio: "1/1" }} /> */}
           </VuiBox>
         </VuiBox>
         <VuiBox display="block" justifyContent="space-beetween" alignItems="center">
-          <Stack direction="row" mx="auto" spacing="10px" sx={{width:'100%'}} >
-            <VuiButton variant="contained" color="warning" sx={{width:"50%"}} onClick={coinflip}>
-              Heads
+          <VuiBox>
+            <Tabs
+              orientation={tabsOrientation}
+              value={kind}
+              onChange={handleKindChange}
+              sx={{ background: "transparent", display: "flex", width: '100%'}}
+            >
+              <Tab label="ETH" icon={<FaEthereum color="white" size="20px" />} sx={{minWidth: "50%"}}/>
+              <Tab label="BNB" icon={<SiBinance color="white" size="20px" />} sx={{minWidth: "50%"}}/>
+            </Tabs>
+          </VuiBox>
+
+          <Stack direction="row" mx="auto" mt={1} spacing="10px" sx={{width:'100%'}} >
+            <VuiButton variant="contained" color="secondary" sx={{width:"50%"}} onClick={coinflip}>
+              <VuiBox component="img" src={Heads} sx={{ width: "25px", aspectRatio: "1/1" }} />
+              &nbsp;&nbsp;&nbsp;&nbsp;Heads
             </VuiButton>
-            <VuiButton variant="contained" color="info" sx={{width:"50%"}} onClick={coinflip}>
-              Tails
+            <VuiButton variant="contained" color="secondary" sx={{width:"50%"}} onClick={coinflip}>
+              <VuiBox component="img" src={Tails} sx={{ width: "25px", aspectRatio: "1/1" }} />
+              &nbsp;&nbsp;&nbsp;&nbsp;Tails
             </VuiButton>
           </Stack>
           <Stack direction="row" spacing="10px" m="auto" mt="10px">
@@ -69,7 +137,7 @@ const GameField = () => {
             </VuiButton>
           </Stack>
         </VuiBox>
-        <VuiBox display="flex" justifyContent="space-beetween" alignItems="center">
+        {/* <VuiBox display="flex" justifyContent="space-beetween" alignItems="center">
           <Stack direction="row" spacing="10px" mr="auto">
             <VuiBox
               display="flex"
@@ -97,7 +165,7 @@ const GameField = () => {
           <VuiTypography variant="button" color="white" fontWeight="bold">
             -$154.50
           </VuiTypography>
-        </VuiBox>
+        </VuiBox> */}
       </VuiBox>
     </Card>
   );
