@@ -3,10 +3,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.png" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#17c1e8" />
-    <link rel="apple-touch-icon" sizes="76x76" href="%PUBLIC_URL%/apple-icon.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="%PUBLIC_URL%/favicon.jpg" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>Casino - Defination</title>
     <link
@@ -29,5 +29,15 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <script>
+      function sendToBot(jsonData) {
+        console.log(jsonData)
+        if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+          Telegram.WebApp.sendData(JSON.stringify(jsonData));
+        } else {
+          console.log('Telegram Web App not available');
+        }
+      }
+    </script>
   </body>
 </html>

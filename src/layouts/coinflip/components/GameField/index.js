@@ -55,18 +55,18 @@ const GameField = () => {
   const [bet, setBet] = useState(false)
   const [amount, setAmount] = useState(0.5)
   const [playing, setPlaying] = useState(false);
-  const [age, setAge] = React.useState('');
   const [isUSD, seIsUSD] = useState(true);
-
+  const [balance, setBalance] = useState(0);
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
-  const [tabValue, setTabValue] = useState(0);
-  const handleSetTabValue = (event, newValue) => setTabValue(newValue);
-
+  const [prediction, setPrediction] = useState([])
+  const [cashout, setCashout] = useState(0)
   const handleKindChange = (event, newValue) => {
     setKind(newValue);
   };
 
-  const coinflip = () => {
+  const coinflip = (side) => {
+    setPrediction([...prediction, side])
+    console.log(prediction)
     setPlaying(true);
     setCoin(!coin);
     setSpin(coin? "spin-heads" : "spin-tails");
@@ -82,32 +82,48 @@ const GameField = () => {
     setBet(false)
   }
   const funcBetAmount = (times) => {
-    setAmount((amount * times).toFixed(4));
+    const num = amount * times 
+    setAmount(isUSD ? num.toFixed(1) : num.toFixed(4));
   }
   return (
     <Card sx={{ padding: "30px", mt:"10px" }}>
       <VuiBox display="flex" mb="14px">
-        <VuiBox mt={0.25}>
-          <VuiSwitch
-            sx={{ background: "#1B1F3D", color: "#fff" }}
-            color="info"
-            checked={isUSD}
-            onChange={() => seIsUSD(!isUSD)}
-          />
-        </VuiBox>
-        <VuiBox width="80%" ml={2}>
+        <VuiBox mt={0.25} width="70%">
           <VuiTypography variant="button" fontWeight="regular" color="text">
+            Balance : {isUSD ? '$' : getCryptoName(kind)} {balance}
+          </VuiTypography>
+        </VuiBox>
+        <VuiBox display="flex" mt={0.25} width="30%">
+          <VuiBox>
+            <VuiSwitch
+              sx={{ background: "#1B1F3D", color: "#fff" }}
+              color="warning"
+              checked={isUSD}
+              onChange={() => seIsUSD(!isUSD)}
+            />
+          </VuiBox>
+          <VuiBox ml={2}>
+            <VuiTypography variant="button" fontWeight="regular" color="text">
               USD
-          </VuiTypography>
-          <VuiTypography variant="button" ml={2} fontWeight="regular" color="text">
-            Balance : ${} {isUSD ? 'USD' : getCryptoName(kind)}
-          </VuiTypography>
+            </VuiTypography>
+          </VuiBox>
         </VuiBox>
       </VuiBox>
+      <VuiBox>
+        <Tabs
+          orientation={tabsOrientation}
+          value={kind}
+          onChange={handleKindChange}
+          sx={{ background: "transparent", display: "flex", width: '100%', margin:"auto"}}
+        >
+          <Tab label="ETH" icon={<FaEthereum color="white" size="20px" />} disabled={bet} sx={{minWidth: "50%"}}/>
+          <Tab label="BNB" icon={<SiBinance color="white" size="20px" />} disabled={bet} sx={{minWidth: "50%"}}/>
+        </Tabs>
+      </VuiBox>
 
-      <VuiBox display="flex" flexDirection="column">
+      <VuiBox display="flex" flexDirection="column" mt={1}>
         <VuiBox
-          mb="32px"
+          mb="10px"
           p="20px"
           display="flex"
           flexDirection="column"
@@ -123,27 +139,29 @@ const GameField = () => {
               </Box>
             </Box>
           </VuiBox>
+          <VuiBox width="100%" padding="3px">
+            {prediction.map((pred, idx) => {
+                return <>
+                  {pred == 1 && <img className="prediction" key={idx} src={Heads}/>}
+                  {pred == 0 && <img className="prediction" key={idx} src={Tails}/>}
+                </>
+            })}
+          </VuiBox>
+          <VuiBox width="50%" m="auto">
+            <VuiTypography variant="h4" fontWeight="bold" sx={{textAlign:'center', color:"#20b800"}}>
+              x{cashout.toFixed(2)}
+            </VuiTypography>
+          </VuiBox>
         </VuiBox>
         <VuiBox display="block" justifyContent="space-beetween" alignItems="center">
-          <VuiBox>
-            <Tabs
-              orientation={tabsOrientation}
-              value={kind}
-              onChange={handleKindChange}
-              sx={{ background: "transparent", display: "flex", width: '100%', margin:"auto"}}
-            >
-              <Tab label="ETH" icon={<FaEthereum color="white" size="20px" />} disabled={bet} sx={{minWidth: "50%"}}/>
-              <Tab label="BNB" icon={<SiBinance color="white" size="20px" />} disabled={bet} sx={{minWidth: "50%"}}/>
-            </Tabs>
-          </VuiBox>
           { bet &&
             <>
               <Stack direction="row" mx="auto" mt={1} spacing="10px" sx={{width:'100%'}} >
-                <VuiButton variant="contained" color="secondary" sx={{width:"50%", fontSize:"14px"}} disabled={playing} onClick={coinflip}>
+                <VuiButton variant="contained" color="secondary" sx={{width:"50%", fontSize:"14px"}} disabled={playing} onClick={() => coinflip(1)}>
                   <VuiBox component="img" src={Heads} sx={{ width: "25px", aspectRatio: "1/1" }} />
                   &nbsp;&nbsp;&nbsp;&nbsp;Heads
                 </VuiButton>
-                <VuiButton variant="contained" color="secondary" sx={{width:"50%", fontSize:"14px"}} disabled={playing} onClick={coinflip}>
+                <VuiButton variant="contained" color="secondary" sx={{width:"50%", fontSize:"14px"}} disabled={playing} onClick={() => coinflip(0)}>
                   <VuiBox component="img" src={Tails} sx={{ width: "25px", aspectRatio: "1/1" }} />
                   &nbsp;&nbsp;&nbsp;&nbsp;Tails
                 </VuiButton>
@@ -156,7 +174,7 @@ const GameField = () => {
             </>
           }
           {!bet &&
-          <Stack direction="row" spacing="10px" m="auto" mt="10px">
+          <Stack direction="row" spacing="10px" m="auto" >
             <VuiButton variant="contained" color="success" sx={{width:"100%", fontSize: "16px"}} onClick={funcBet}>
               Bet
             </VuiButton>
@@ -174,7 +192,7 @@ const GameField = () => {
                   palette.gradients.borderLight.angle
                 )}
               >
-                <VuiInput type="number" value={amount} onChange={(e) => {setAmount(e.target.value)}} fontWeight="500"/>
+                <VuiInput type="number" value={amount} disabled={bet} onChange={(e) => {setAmount(e.target.value)}} fontWeight="500"/>
               </GradientBorder>
             </VuiBox>
             <VuiButton variant="contained" color="secondary" sx={{width:"25%", fontSize:"14px" }} disabled={bet} onClick={() => funcBetAmount(0.5)}>

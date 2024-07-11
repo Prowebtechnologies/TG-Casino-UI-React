@@ -5,8 +5,11 @@ import VuiBox from "components/VuiBox";
 import VuiTypography from "components/VuiTypography";
 
 import gif from "assets/images/welcome-profile.png";
+import { useSelector } from "react-redux";
 
 const WelcomeMark = () => {
+  const name = useSelector((state) => state.user.name)
+  const username = useSelector((state) => state.user.username)
   return (
     <Card sx={() => ({
       height: "340px",
@@ -20,12 +23,15 @@ const WelcomeMark = () => {
           <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px">
             Welcome To Defination Lab,
           </VuiTypography>
-          <VuiTypography color="white" variant="h3" fontWeight="bold" mb="18px">
-            Mark Johnson
+          <VuiTypography color="white" variant="h3" fontWeight="bold">
+            {name} 
+          </VuiTypography>
+          <VuiTypography color="white" variant="h5" fontWeight="bold" mb="18px">
+            @{username} 
           </VuiTypography>
           <VuiTypography color="white" variant="h6" fontWeight="regular" mb="auto">
             Glad to see you again!
-            <br /> Please enjoy here!
+            <br />Please enjoy here!
           </VuiTypography>
         </VuiBox>
         <VuiTypography

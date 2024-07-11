@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-
 // react-router components
-import { Route, Switch, Redirect, useLocation } from "react-router-dom";
+import { Route, Switch, useLocation, Redirect } from "react-router-dom";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -22,13 +21,11 @@ import routes from "routes";
 
 // Vision UI Dashboard React contexts
 import { useVisionUIController, setMiniSidenav } from "context";
-
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
   const { miniSidenav, direction, layout, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
-
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
     if (miniSidenav && !onMouseEnter) {
@@ -86,7 +83,7 @@ export default function App() {
       )}
       <Switch>
         {getRoutes(routes)}
-        <Redirect from="*" to="/home" />
+        {/* <Redirect from="*" to="/home" /> */}
       </Switch>
     </ThemeProvider>
   );
