@@ -57,7 +57,7 @@ const getCryptoName = (crypto) => {
 
 const GameField = () => {
   const [spin, setSpin] = useState("");
-  const [kind, setKind] = useState(ETH)
+  const [type, setType] = useState(ETH)
   const [coin, setCoin] = useState(false);
   const [bet, setBet] = useState(false)
   const [amount, setAmount] = useState(0.5)
@@ -87,9 +87,18 @@ const GameField = () => {
     const balance = await callAPI(config)
     dispatch(setBalance(balance))
   }
-  
+  const getVisibleBalance = () => {
+    return parseFloat(((isUSD ? (type == 0 ? Price_ETH : Price_BNB) : 1) * (type == 0 ? balance.ETH : balance.BNB)).toFixed(4))
+  }
+  const funcBetAmount = (times) => {
+    const num = amount * times;
+    const money = isUSD ? num.toFixed(1) : num.toFixed(4)
+    const visibleBalance = getVisibleBalance();
+    setAmount( visibleBalance > money ? money : visibleBalance );
+  }
   const handleKindChange = (event, newValue) => {
-    setKind(newValue);
+    setType(newValue);
+    setAmount(0.0)
   };
 
   const coinflip = (side) => {
@@ -101,24 +110,36 @@ const GameField = () => {
     setTimeout(() => {setPlaying(false)}, 3000)
     // setSpin("")
   }
-  const funcBet = () => {
-    //balance will decrease
+  const funcBet = async () => {
     setBet(true)
+    const price = isUSD ? ( type == 0 ? Price_ETH : Price_BNB ) : 1;
+    const betAmount = parseFloat((parseFloat(amount) / price).toFixed(4))
+    const config = {
+      method: 'POST',
+      url : `${CASINO_SERVER}/bet_coinflip`,
+      data: {
+        // hash: hash
+        UserID: userid,
+        coin_type: parseInt(type),
+        bet_amount: betAmount,
+      }          
+    }
+    const betRes = await callAPI(config)
+    console.log(betRes)
+    // 
+    //balance will decrease
   }
   const funcCashout = () => {
     //balance will increase
     setBet(false)
-  }
-  const funcBetAmount = (times) => {
-    const num = amount * times 
-    setAmount(isUSD ? num.toFixed(1) : num.toFixed(4));
+    setPrediction([])
   }
   return (
     <Card sx={{ padding: "30px", mt:"10px" }}>
       <VuiBox display="flex" mb="14px">
         <VuiBox mt={0.25} width="70%">
           <VuiTypography variant="button" fontWeight="regular" color="warning">
-            Balance : {isUSD ? '$' : getCryptoName(kind)} {((isUSD ? (kind == 0 ? Price_ETH : Price_BNB) : 1) * (kind == 0 ? balance.ETH : balance.BNB)).toFixed(4)}
+            Balance : {isUSD ? '$' : getCryptoName(type)} {getVisibleBalance()}
           </VuiTypography>
         </VuiBox>
         <VuiBox display="flex" mt={0.25} width="30%">
@@ -140,7 +161,7 @@ const GameField = () => {
       <VuiBox>
         <Tabs
           orientation={tabsOrientation}
-          value={kind}
+          value={type}
           onChange={handleKindChange}
           sx={{ background: "transparent", display: "flex", width: '100%', margin:"auto"}}
         >
@@ -203,7 +224,7 @@ const GameField = () => {
           }
           {!bet &&
           <Stack direction="row" spacing="10px" m="auto" >
-            <VuiButton variant="contained" color="success" sx={{width:"100%", fontSize: "16px"}} onClick={funcBet}>
+            <VuiButton variant="contained" color="success" sx={{width:"100%", fontSize: "16px"}} onClick={funcBet} disabled={amount <= 0}>
               Bet
             </VuiButton>
           </Stack>

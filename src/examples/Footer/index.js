@@ -21,7 +21,7 @@ function Footer() {
           sx={{ textAlign: "center", fontWeight: "400 !important" }}
           color="white"
         >
-          @ 2024, DefinationLab
+          @ 2024 - DefinationLab
         </VuiTypography>
       </VuiBox>
       {/* <VuiBox item xs={10}>
