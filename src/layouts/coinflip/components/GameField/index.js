@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 // @mui components
 import { 
   AppBar,
@@ -10,7 +12,7 @@ import {
 } from "@mui/material";
 
 // Vision UI Dashboard assets
-import balance from "assets/images/billing-background-balance.png";
+import balancePng from "assets/images/billing-background-balance.png";
 import Heads from "assets/images/heads.webp";
 import Tails from "assets/images/tails.webp";
 
@@ -31,6 +33,11 @@ import { MdOutlineDomain } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
 import { SiBinance } from "react-icons/si";
 import {Box, Select, MenuItem, FormControl} from "@mui/material";
+
+import { setBalance } from "../../../../slices/user.slice";
+import callAPI from "../../../../api/index";
+import { CASINO_SERVER } from "../../../../variables/url";
+
 import './index.css'
 
 const ETH = 0;
@@ -56,10 +63,31 @@ const GameField = () => {
   const [amount, setAmount] = useState(0.5)
   const [playing, setPlaying] = useState(false);
   const [isUSD, seIsUSD] = useState(true);
-  const [balance, setBalance] = useState(0);
+  const [balanceValue, setBalanceValue] = useState(0);
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [prediction, setPrediction] = useState([])
   const [cashout, setCashout] = useState(0)
+  const {userid, balance} = useSelector((state) => state.user)
+  const {Price_ETH, Price_BNB} = useSelector((state) => state.price)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetchBalance()
+  }, [userid])
+
+  const fetchBalance = async () => {
+    const config = {
+      method: 'POST',
+      url : `${CASINO_SERVER}/balance`,
+      data: {
+        UserID: userid,
+        // hash: hash
+      }          
+    }
+    const balance = await callAPI(config)
+    dispatch(setBalance(balance))
+  }
+  
   const handleKindChange = (event, newValue) => {
     setKind(newValue);
   };
@@ -89,8 +117,8 @@ const GameField = () => {
     <Card sx={{ padding: "30px", mt:"10px" }}>
       <VuiBox display="flex" mb="14px">
         <VuiBox mt={0.25} width="70%">
-          <VuiTypography variant="button" fontWeight="regular" color="text">
-            Balance : {isUSD ? '$' : getCryptoName(kind)} {balance}
+          <VuiTypography variant="button" fontWeight="regular" color="warning">
+            Balance : {isUSD ? '$' : getCryptoName(kind)} {((isUSD ? (kind == 0 ? Price_ETH : Price_BNB) : 1) * (kind == 0 ? balance.ETH : balance.BNB)).toFixed(4)}
           </VuiTypography>
         </VuiBox>
         <VuiBox display="flex" mt={0.25} width="30%">
@@ -127,7 +155,7 @@ const GameField = () => {
           p="20px"
           display="flex"
           flexDirection="column"
-          sx={{ backgroundImage: `url(${balance})`, backgroundSize: "cover", borderRadius: "18px" }}
+          sx={{ backgroundImage: `url(${balancePng})`, backgroundSize: "cover", borderRadius: "18px" }}
         >
           <VuiBox display="flex" justifyContent="space-beetween" alignItems="center">
             <Box className="coin" id="coin" sx={{ animation : `${spin} 2.5s forwards`, aspectRatio:'1/1'}}>

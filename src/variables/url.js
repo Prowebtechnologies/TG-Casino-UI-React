@@ -1,0 +1,1 @@
+export const CASINO_SERVER = "http://45.137.155.8:5000"

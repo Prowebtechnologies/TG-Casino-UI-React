@@ -4,7 +4,8 @@ const initialState = {
   name: "BBT",
   username: "",
   userid: "",
-  hash : ""
+  hash : "",
+  balance: {ETH: 0.0, BNB: 0.0}
 }
 
 export const userSlice = createSlice({
@@ -23,9 +24,12 @@ export const userSlice = createSlice({
     setHash: (state, action) => {
       state.hash = action.payload
     },
+    setBalance: (state, action) => {
+      state.balance = action.payload
+    },
   },
 })
 
-export const { setName, setUserName, setUserId, setHash } = userSlice.actions
+export const { setName, setUserName, setUserId, setHash, setBalance } = userSlice.actions
 
 export default userSlice.reducer

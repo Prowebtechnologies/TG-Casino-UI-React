@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 // react-router components
 import { Route, Switch, useLocation, Redirect } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -21,11 +21,17 @@ import routes from "routes";
 
 // Vision UI Dashboard React contexts
 import { useVisionUIController, setMiniSidenav } from "context";
+import axios from "axios";
+
+import { CASINO_SERVER } from "./variables/url";
+import { setETH, setBNB } from "./slices/price.slice";
+
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
   const { miniSidenav, direction, layout, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
+  const reduxDispatch = useDispatch();
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
     if (miniSidenav && !onMouseEnter) {
@@ -41,6 +47,22 @@ export default function App() {
       setOnMouseEnter(false);
     }
   };
+
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const response = await axios.get(`${CASINO_SERVER}/price`);
+        const priceData = response.data;
+        reduxDispatch(setETH(priceData[0][3]))
+        reduxDispatch(setBNB(priceData[1][3]))
+      } catch (err) {
+        console.error("Failed to fetch price", err);
+      }
+    };
+    fetchPrice();
+    const intervalId = setInterval(fetchPrice, 60000);
+    return () => clearInterval(intervalId);
+  },[])
 
   // Setting the dir attribute for the body element
   useEffect(() => {
