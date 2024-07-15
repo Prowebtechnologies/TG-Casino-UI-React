@@ -29,10 +29,9 @@ import borders from "assets/theme/base/borders";
 import radialGradient from "assets/theme/functions/radialGradient";
 
 // React icons
-import { MdOutlineDomain } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
 import { SiBinance } from "react-icons/si";
-import {Box, Select, MenuItem, FormControl} from "@mui/material";
+import {Box} from "@mui/material";
 
 import { setBalance } from "../../../../slices/user.slice";
 import callAPI from "../../../../api/index";
@@ -73,11 +72,22 @@ const GameField = () => {
   const [cashout, setCashout] = useState(0)
   const {userid, balance} = useSelector((state) => state.user)
   const {Price_ETH, Price_BNB} = useSelector((state) => state.price)
+  const [provables, setProbables] = useState([])
   const dispatch = useDispatch();
   useEffect(() => {
     fetchBalance()
   }, [userid])
-
+  const getOtherSpin = (spin_type) => {
+    if(spin_type == "spin-heads") {
+      return "spin-heads-1"
+    } else if(spin_type == "spin-heads-1") {
+      return "spin-heads"
+    } else if(spin_type == "spin-tails-1") {
+      return "spin-tails"
+    } else if(spin_type == "spin-tails") {
+      return "spin-tails-1"
+    }
+  }
   const fetchBalance = async () => {
     const config = {
       method: 'POST',
@@ -107,6 +117,7 @@ const GameField = () => {
     try {
       setBetting(true)
       setPrediction([])
+      setProbables([])
       setCashout(0)
       setCashoutColor(winColor)
       const price = isUSD ? ( type == 0 ? Price_ETH : Price_BNB ) : 1;
@@ -139,18 +150,6 @@ const GameField = () => {
       setBetting(false)
     }
   }
-  const getOtherSpin = (spin_type) => {
-    if(spin_type == "spin-heads") {
-      return "spin-heads-1"
-    } else if(spin_type == "spin-heads-1") {
-      return "spin-heads"
-    } else if(spin_type == "spin-tails-1") {
-      return "spin-tails"
-    } else if(spin_type == "spin-tails") {
-      return "spin-tails-1"
-    }
-  }
-
   const coinflip = async (coin_side) => {
     setPrediction([...prediction, coin_side])
     setPlaying(true);
@@ -182,19 +181,25 @@ const GameField = () => {
       spin_type = getOtherSpin(spin_type)
     }
 
+    const seed = flipRes.seed;
+    const nonce = flipRes.nonce;
+    const prov = {
+      hash:serverHash,
+      seed,nonce
+    }
+
     setSpin(spin_type);
     setTimeout(() => {
       setPlaying(false)
       setCashoutColor(color)
       setCashout(winning_rate)
+      setProbables([prov,...provables])
       if(!win) {
         setBet(false)
       }
     }, 3000)
 
 
-    const seed = flipRes.seed;
-    const nonce = flipRes.nonce;
 
     const next_hash = flipRes.next_hash;
     setServerNextHash(next_hash)
@@ -303,7 +308,7 @@ const GameField = () => {
                 </VuiButton>
               </Stack>
               <Stack direction="row" spacing="10px" m="auto" mt="10px">
-                <VuiButton variant="contained" color="warning" sx={{width:"100%", fontSize: "16px"}} disabled={playing} onClick={funcCashout}>
+                <VuiButton variant="contained" color="warning" sx={{width:"100%", fontSize: "16px"}} disabled={playing || cashout == 0} onClick={funcCashout}>
                   Cashout
                 </VuiButton>
               </Stack>
@@ -340,35 +345,35 @@ const GameField = () => {
           </Stack>
 
         </VuiBox>
-        {/* <VuiBox display="flex" justifyContent="space-beetween" alignItems="center">
-          <Stack direction="row" spacing="10px" mr="auto">
-            <VuiBox
-              display="flex"
-              mr="10px"
-              justifyContent="center"
-              alignItems="center"
-              sx={{
-                background: "rgba(34, 41, 78, 0.7)",
-                borderRadius: "50%",
-                width: "42px",
-                height: "42px",
-              }}
-            >
-              <MdOutlineDomain color={palette.success.main} size="20px" />
-            </VuiBox>
+        <VuiBox display="block" justifyContent="space-beetween" mt={2} pl="10px" alignItems="center">
+          <Stack direction="row" spacing="10px" m="auto">
             <VuiBox display="flex" flexDirection="column">
-              <VuiTypography color="white" variant="button" fontWeight="medium">
-                Bill & Taxes
-              </VuiTypography>
-              <VuiTypography color="text" variant="button" fontWeight="medium">
-                Today, 16:36
+              <VuiTypography color="white" variant="button" fontWeight="medium" sx={{textOverflow: 'ellipsis'}}>
+                Round Hash : {serverNextHash != "" ? serverNextHash.substring(0,5) + " ... " + serverNextHash.slice(-5) : ""}
               </VuiTypography>
             </VuiBox>
           </Stack>
-          <VuiTypography variant="button" color="white" fontWeight="bold">
-            -$154.50
-          </VuiTypography>
-        </VuiBox> */}
+        </VuiBox>
+        {provables.map((prov, idx) => {
+            return <>
+              <VuiBox key={idx} display="block" justifyContent="space-beetween" mt={2} pl="10px" alignItems="center" sx={{border : '2px solid white', borderRadius:'10px'}}>
+                <Stack direction="row" spacing="10px" m="auto">
+                  <VuiBox display="flex" flexDirection="column">
+                    <VuiTypography color="white" variant="button" fontWeight="medium">
+                      Hash : {prov.hash.substring(0,10) + " ... " + prov.hash.slice(-10)}
+                    </VuiTypography>
+                  </VuiBox>
+                </Stack>
+                <Stack direction="row" spacing="10px" mr="auto">
+                  <VuiBox display="flex" flexDirection="column">
+                    <VuiTypography color="white" variant="button" fontWeight="medium">
+                      Seed : {prov.seed}&nbsp;&nbsp;&nbsp;Nonce : {prov.nonce}
+                    </VuiTypography>
+                  </VuiBox>
+                </Stack>
+              </VuiBox>
+            </>
+        })}
       </VuiBox>
     </Card>
   );
