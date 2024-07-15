@@ -5,7 +5,8 @@ const initialState = {
   username: "",
   userid: "",
   hash : "",
-  balance: {ETH: 0.0, BNB: 0.0}
+  balance: {ETH: 0.0, BNB: 0.0},
+  age: -1
 }
 
 export const userSlice = createSlice({
@@ -26,7 +27,7 @@ export const userSlice = createSlice({
     },
     setBalance: (state, action) => {
       state.balance = action.payload
-    },
+    }
   },
 })
 

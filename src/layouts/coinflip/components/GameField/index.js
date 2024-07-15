@@ -54,23 +54,26 @@ const getCryptoName = (crypto) => {
   }
   return name
 }
-
+const winColor = '#20b800'
+const failedColor = '#f02000'
 const GameField = () => {
+  const [cashoutColor, setCashoutColor] = useState(winColor)
   const [spin, setSpin] = useState("");
   const [type, setType] = useState(ETH)
   const [coin, setCoin] = useState(false);
   const [bet, setBet] = useState(false)
+  const [betting, setBetting] = useState(false)
   const [amount, setAmount] = useState(0.5)
   const [playing, setPlaying] = useState(false);
   const [isUSD, seIsUSD] = useState(true);
-  const [balanceValue, setBalanceValue] = useState(0);
-  const [tabsOrientation, setTabsOrientation] = useState("horizontal");
+  const [serverHash, setServerHash] = useState("")
+  const [serverNextHash, setServerNextHash] = useState("")
   const [prediction, setPrediction] = useState([])
+  const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [cashout, setCashout] = useState(0)
   const {userid, balance} = useSelector((state) => state.user)
   const {Price_ETH, Price_BNB} = useSelector((state) => state.price)
   const dispatch = useDispatch();
-
   useEffect(() => {
     fetchBalance()
   }, [userid])
@@ -100,42 +103,119 @@ const GameField = () => {
     setType(newValue);
     setAmount(0.0)
   };
-
-  const coinflip = (side) => {
-    setPrediction([...prediction, side])
-    console.log(prediction)
-    setPlaying(true);
-    setCoin(!coin);
-    setSpin(coin? "spin-heads" : "spin-tails");
-    setTimeout(() => {setPlaying(false)}, 3000)
-    // setSpin("")
-  }
   const funcBet = async () => {
-    setBet(true)
-    const price = isUSD ? ( type == 0 ? Price_ETH : Price_BNB ) : 1;
-    const betAmount = parseFloat((parseFloat(amount) / price).toFixed(4))
+    try {
+      setBetting(true)
+      setPrediction([])
+      setCashout(0)
+      setCashoutColor(winColor)
+      const price = isUSD ? ( type == 0 ? Price_ETH : Price_BNB ) : 1;
+      const betAmount = parseFloat((parseFloat(amount) / price).toFixed(4))
+  
+      const config = {
+        method: 'POST',
+        url : `${CASINO_SERVER}/bet_coinflip`,
+        data: {
+          // hash: hash
+          UserID: userid,
+          coin_type: parseInt(type),
+          bet_amount: betAmount,
+        }          
+      }
+      const betRes = await callAPI(config)
+      const balance = {
+        "ETH" : betRes.ETH,
+        "BNB" : betRes.BNB,
+      }
+      setBet(true)
+      setBetting(false)
+      setServerHash(betRes.hash)
+      setServerNextHash(betRes.hash)
+      dispatch(setBalance(balance))
+  
+      console.log(betRes)
+    } catch {
+      setBet(false)
+      setBetting(false)
+    }
+  }
+  
+  const coinflip = async (coin_side) => {
+    setPrediction([...prediction, coin_side])
+    setPlaying(true);
+    setServerHash(serverNextHash)
     const config = {
       method: 'POST',
-      url : `${CASINO_SERVER}/bet_coinflip`,
+      url : `${CASINO_SERVER}/pred_coinflip`,
       data: {
         // hash: hash
         UserID: userid,
-        coin_type: parseInt(type),
-        bet_amount: betAmount,
+        server_hash: serverNextHash,
+        coin: coin_side,
       }          
     }
-    const betRes = await callAPI(config)
-    console.log(betRes)
-    // 
-    //balance will decrease
+    const flipRes = await callAPI(config);
+    console.log(flipRes);
+    if(flipRes.status == -1) {
+      console.log("GameError")
+      return
+    }
+    const coinResult = flipRes.result;
+    const winning_rate = flipRes.winning_rate;
+    const win = flipRes.win;
+    const color = win ? winColor : failedColor
+
+    let spin_coin = true
+    if(coinResult == 1){
+      spin_coin = true
+    }else{
+      spin_coin = false
+    }
+    // if(spin_coin == coin) {
+    //   setCoin(!coin)
+    // }
+    setCoin(spin_coin)
+    setSpin(coin ? "spin-heads" : "spin-tails");
+    setTimeout(() => {
+      setPlaying(false)
+      setCashoutColor(color)
+      setCashout(winning_rate)
+      if(!win) {
+        setBet(false)
+      }
+    }, 3000)
+
+
+    const seed = flipRes.seed;
+    const nonce = flipRes.nonce;
+
+    const next_hash = flipRes.next_hash;
+    setServerNextHash(next_hash)
   }
-  const funcCashout = () => {
+
+  const funcCashout = async () => {
     //balance will increase
     setBet(false)
-    setPrediction([])
+    const config = {
+      method: 'POST',
+      url : `${CASINO_SERVER}/cashout_coinflip`,
+      data: {
+        // hash: hash
+        UserID: userid,
+        server_hash: serverHash,
+      }          
+    }
+    const endRes = await callAPI(config);
+    console.log(endRes)
+    await fetchBalance()
   }
   return (
     <Card sx={{ padding: "30px", mt:"10px" }}>
+      <VuiBox mt={0.25} width="100%">
+        <VuiTypography variant="button" fontWeight="regular" color="white">
+          HouseCutFee : 5%
+        </VuiTypography>
+      </VuiBox>
       <VuiBox display="flex" mb="14px">
         <VuiBox mt={0.25} width="70%">
           <VuiTypography variant="button" fontWeight="regular" color="warning">
@@ -197,7 +277,7 @@ const GameField = () => {
             })}
           </VuiBox>
           <VuiBox width="50%" m="auto">
-            <VuiTypography variant="h4" fontWeight="bold" sx={{textAlign:'center', color:"#20b800"}}>
+            <VuiTypography variant="h4" fontWeight="bold" sx={{textAlign:'center', color:cashoutColor }}>
               x{cashout.toFixed(2)}
             </VuiTypography>
           </VuiBox>
@@ -224,7 +304,7 @@ const GameField = () => {
           }
           {!bet &&
           <Stack direction="row" spacing="10px" m="auto" >
-            <VuiButton variant="contained" color="success" sx={{width:"100%", fontSize: "16px"}} onClick={funcBet} disabled={amount <= 0}>
+            <VuiButton variant="contained" color="success" sx={{width:"100%", fontSize: "16px"}} onClick={funcBet} disabled={amount <= 0 || betting}>
               Bet
             </VuiButton>
           </Stack>

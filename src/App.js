@@ -21,11 +21,10 @@ import routes from "routes";
 
 // Vision UI Dashboard React contexts
 import { useVisionUIController, setMiniSidenav } from "context";
-import axios from "axios";
+import callAPI from "./api/index";
 
 import { CASINO_SERVER } from "./variables/url";
 import { setETH, setBNB } from "./slices/price.slice";
-
 export default function App() {
   const [controller, dispatch] = useVisionUIController();
   const { miniSidenav, direction, layout, sidenavColor } = controller;
@@ -51,8 +50,11 @@ export default function App() {
   useEffect(() => {
     const fetchPrice = async () => {
       try {
-        const response = await axios.get(`${CASINO_SERVER}/price`);
-        const priceData = response.data;
+        const config = {
+          method: 'GET',
+          url: `${CASINO_SERVER}/price`
+        }
+        const priceData = await callAPI(config);
         reduxDispatch(setETH(priceData[0][3]))
         reduxDispatch(setBNB(priceData[1][3]))
       } catch (err) {
