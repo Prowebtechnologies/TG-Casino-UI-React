@@ -139,7 +139,18 @@ const GameField = () => {
       setBetting(false)
     }
   }
-  
+  const getOtherSpin = (spin_type) => {
+    if(spin_type == "spin-heads") {
+      return "spin-heads-1"
+    } else if(spin_type == "spin-heads-1") {
+      return "spin-heads"
+    } else if(spin_type == "spin-tails-1") {
+      return "spin-tails"
+    } else if(spin_type == "spin-tails") {
+      return "spin-tails-1"
+    }
+  }
+
   const coinflip = async (coin_side) => {
     setPrediction([...prediction, coin_side])
     setPlaying(true);
@@ -165,17 +176,13 @@ const GameField = () => {
     const win = flipRes.win;
     const color = win ? winColor : failedColor
 
-    let spin_coin = true
-    if(coinResult == 1){
-      spin_coin = true
-    }else{
-      spin_coin = false
+    let spin_type = coinResult == 1 ? "spin-heads" : "spin-tails"
+
+    if(spin_type == spin) {
+      spin_type = getOtherSpin(spin_type)
     }
-    // if(spin_coin == coin) {
-    //   setCoin(!coin)
-    // }
-    setCoin(spin_coin)
-    setSpin(coin ? "spin-heads" : "spin-tails");
+
+    setSpin(spin_type);
     setTimeout(() => {
       setPlaying(false)
       setCashoutColor(color)
