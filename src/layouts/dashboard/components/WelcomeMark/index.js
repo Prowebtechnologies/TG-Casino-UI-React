@@ -6,6 +6,7 @@ import VuiTypography from "components/VuiTypography";
 
 import gif from "assets/images/welcome-profile.png";
 import { useSelector } from "react-redux";
+import './index.css';
 
 const WelcomeMark = () => {
   const name = useSelector((state) => state.user.name)
@@ -16,7 +17,8 @@ const WelcomeMark = () => {
       py: "32px",
       backgroundImage: `url(${gif})`,
       backgroundSize: "cover",
-      backgroundPosition: "50%"
+      backgroundPosition: "50%",
+      width:"inherit"
     })}>
       <VuiBox height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         <VuiBox>

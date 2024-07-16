@@ -44,6 +44,7 @@ import { HiMiniArrowsUpDown } from "react-icons/hi2";
 // import { lineChartOptionsDashboard } from "layouts/dashboard/data/lineChartOptions";
 // import { barChartDataDashboard } from "layouts/dashboard/data/barChartData";
 // import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions";
+import './index.css';
 
 function Dashboard() {
   const { gradients } = colors;
@@ -54,18 +55,20 @@ function Dashboard() {
       <DashboardNavbar />
       <VuiBox py={3}>
         <VuiBox mb={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} xl={3}>
+          <Grid container display="block" spacing={3}>
+            <Grid item xs={12} >
               <Link to="/coinflip">
                 <MiniStatisticsCard
+                  sx={{'& > div > div > div.MuiGrid-container' : {justifyContent: "space-between"} }}
                   title={{ text: "Defination", fontWeight: "regular" }}
                   count="CoinFlip"
+                  
                   // percentage={{ color: "success", text: "+55%" }}
-                  icon={{ color: "info", component: <IoInvertMode size="22px" color="white" /> }}
+                  icon={{ color: "info", component: <IoInvertMode size="22px" color="white"/> }}
                 />
               </Link>
             </Grid>
-            <Grid item xs={12} md={6} xl={3}>
+            <Grid item xs={12}>
               <Link to="/slot">
                 <MiniStatisticsCard
                   title={{ text: "Defination", fontWeight: "regular" }}
@@ -75,7 +78,7 @@ function Dashboard() {
                 />
               </Link>
             </Grid>
-            <Grid item xs={12} md={6} xl={3}>
+            <Grid item xs={12}>
               <Link to="/hilo">
                 <MiniStatisticsCard
                   title={{ text: "Defination", fontWeight: "regular" }}
@@ -90,7 +93,7 @@ function Dashboard() {
 
         <VuiBox mb={3}>
           <Grid container spacing="18px">
-            <Grid item xs={12} lg={12} xl={5}>
+            <Grid item xs={12}>
               <WelcomeMark />
             </Grid>
             {/* <Grid item xs={12} lg={6} xl={3}>
