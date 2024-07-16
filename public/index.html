@@ -30,10 +30,16 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <script>
-      window.addEventListener('load', (event) => {
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+      var g_InitData = null
+      document.addEventListener("DOMContentLoaded", function () {
+        // Check if Telegram Web App is available
+        if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+          g_InitData = Telegram.WebApp.initData;
+          g_InitData.ready();
+          g_InitData.expand();
+        } else {
+          console.log('Telegram Web App not available');
+        }
       });
       function sendToBot(jsonData) {
         console.log(jsonData)
