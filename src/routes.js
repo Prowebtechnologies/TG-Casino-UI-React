@@ -1,17 +1,16 @@
-// Vision UI Dashboard React layouts
 import Dashboard from "layouts/dashboard";
-import Tables from "layouts/tables";
-import Billing from "layouts/billing";
-import Profile from "layouts/profile";
+// import Tables from "layouts/tables";
+// import Billing from "layouts/billing";
+// import Profile from "layouts/profile";
 import Coinflip from "layouts/coinflip";
+import Slot from "layouts/slot";
 import Enter from "layouts/enter";
-// Vision UI Dashboard React icons
-import { BsFillPersonFill } from "react-icons/bs";
+// import { BsFillPersonFill } from "react-icons/bs";
 // import { BsCreditCardFill } from "react-icons/bs";
-import { IoWallet } from "react-icons/io5";
-import { IoStatsChart } from "react-icons/io5";
+// import { IoWallet } from "react-icons/io5";
+// import { IoStatsChart } from "react-icons/io5";
 import { IoHome } from "react-icons/io5";
-import { element } from "prop-types";
+// import { element } from "prop-types";
 
 const routes = [
   {
@@ -66,6 +65,15 @@ const routes = [
     route: "/coinflip",
     icon: <IoHome size="15px" color="inherit" />,
     component: Coinflip,
+    noCollapse: true,
+  },
+  {
+    type: "component",
+    name: "Slot",
+    key: "slot",
+    route: "/slot",
+    icon: <IoHome size="15px" color="inherit" />,
+    component: Slot,
     noCollapse: true,
   },
 ];

@@ -1,0 +1,9 @@
+img.item-small {
+    width: 350x;
+    height: 30px;
+    margin: 5px;
+}
+
+#slot-box > span {
+    margin: auto;
+}

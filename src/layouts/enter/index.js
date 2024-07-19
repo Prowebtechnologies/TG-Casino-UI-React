@@ -30,7 +30,10 @@ const Enter = () => {
             case 'coinflip':
                 history.push('/coinflip');
                 break;
-            case 'profile':
+            case 'slot':
+                history.push('/slot');
+                break;
+                case 'profile':
                 history.push('/profile');
                 break;
             default:
