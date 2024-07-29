@@ -27,13 +27,16 @@ const Enter = () => {
     }
     useEffect(() => {
         switch(navigate){
+            case 'plinko':
+                history.push('/plinko');
+                break;
             case 'coinflip':
                 history.push('/coinflip');
                 break;
             case 'slot':
                 history.push('/slot');
                 break;
-                case 'profile':
+            case 'profile':
                 history.push('/profile');
                 break;
             default:

@@ -23,7 +23,7 @@ const WelcomeMark = () => {
       <VuiBox height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         <VuiBox>
           <VuiTypography color="white" variant="button" fontWeight="regular" mb="12px">
-            Welcome To Defination Lab,
+            Welcome To DefinationLab,
           </VuiTypography>
           <VuiTypography color="white" variant="h3" fontWeight="bold">
             {name} 
@@ -38,7 +38,7 @@ const WelcomeMark = () => {
         </VuiBox>
         <VuiTypography
           component="a"
-          href="https://definationlabs.io"
+          href="https://definationlabs.io/"
           variant="button"
           color="white"
           fontWeight="regular"
@@ -59,7 +59,7 @@ const WelcomeMark = () => {
             },
           }}
         >
-          Defination Lab
+          DefinationLab
           <Icon sx={{ fontWeight: "bold", ml: "5px" }}>arrow_forward</Icon>
         </VuiTypography>
       </VuiBox>
