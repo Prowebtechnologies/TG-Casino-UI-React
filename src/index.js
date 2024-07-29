@@ -10,12 +10,13 @@ import { VisionUIControllerProvider } from "context";
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
-
-root.render(<BrowserRouter>
-  <VisionUIControllerProvider>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </VisionUIControllerProvider>
-</BrowserRouter>)
+root.render(
+  <BrowserRouter>
+    <VisionUIControllerProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </VisionUIControllerProvider>
+  </BrowserRouter>
+)
 

@@ -12,6 +12,9 @@ VisionUI.displayName = "VisionUIContext";
 // Vision UI Dashboard React reducer
 function reducer(state, action) {
   switch (action.type) {
+    case "SOCKET_STATUS": {
+      return { ...state, isConnected: action.value };
+    }
     case "MINI_SIDENAV": {
       return { ...state, miniSidenav: action.value };
     }
@@ -42,6 +45,7 @@ function reducer(state, action) {
 // Vision UI Dashboard React context provider
 function VisionUIControllerProvider({ children }) {
   const initialState = {
+    isConnected: false,
     miniSidenav: false,
     transparentSidenav: true,
     sidenavColor: "info",
@@ -74,6 +78,7 @@ VisionUIControllerProvider.propTypes = {
 };
 
 // Context module functions
+const setIsConnected = (dispatch, value) => dispatch({ type: "SOCKET_STATUS", value });
 const setMiniSidenav = (dispatch, value) => dispatch({ type: "MINI_SIDENAV", value });
 const setTransparentSidenav = (dispatch, value) => dispatch({ type: "TRANSPARENT_SIDENAV", value });
 const setSidenavColor = (dispatch, value) => dispatch({ type: "SIDENAV_COLOR", value });
@@ -86,6 +91,7 @@ const setLayout = (dispatch, value) => dispatch({ type: "LAYOUT", value });
 export {
   VisionUIControllerProvider,
   useVisionUIController,
+  setIsConnected,
   setMiniSidenav,
   setTransparentSidenav,
   setSidenavColor,
